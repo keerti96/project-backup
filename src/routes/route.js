@@ -20,6 +20,7 @@ router.put('/blogs/:blogId',blogController.updateBlog)
 
 //--------------------------------------------DELETE BLOG API-------------------------------------------------------
 router.delete('/blogs/:blogId',blogController.deleteById)
+//--------------------------------------------DELETE BLOG by filters API-------------------------------------------------------
 router.delete('/blogs',blogController.deleteBlog)
 
 //---------------------------------------------AUTHOR LOGIN API------------------------------------------------------
