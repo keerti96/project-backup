@@ -1,6 +1,8 @@
+const jwt = require("jsonwebtoken");
 const timestamp = require('time-stamp')
 const authorModel = require('../models/authorModel')
 const blogModel = require('../models/blogModel')
+
 //--------------------------------------------CREATEBLOG-------------------------------------------------------------
 const createBlog = async function (req, res) {
     try {
@@ -47,7 +49,9 @@ const getBlog = async function (req, res) {
             if (subcategory) {
                 filters.subcategory = subcategory
             }
+            
             const savedData = await blogModel.find({ $and: [{ isDeleted: false }, { isPublished: true }, filters] }).populate("authorId")
+            
             res.status(200).send({ status: true, msg: savedData })
         }
     }
@@ -69,8 +73,9 @@ const authorLogin=async function(req ,res){
         let userName = req.body.emailId;
         let password = req.body.password;
 
-        let user = await userModel.findOne({ emailId: userName, password: password });
-        if (!user)
+
+        let auth = await authorModel.findOne({ emailId: userName, password: password });
+        if (!auth)
             return res.status(403).send({
             status: false,
             msg: "username or the password is not corerct",
@@ -84,13 +89,11 @@ const authorLogin=async function(req ,res){
         // The same secret will be used to decode tokens
         let token = jwt.sign(
             {
-            author: user._id.toString(),
-            batch: "thorium",
-            organisation: "FunctionUp",
+                id: auth._id 
             },
-            "functionup-radon"
+            "group9"
         );
-        res.setHeader("x-auth-token", token);
+        res.setHeader("x-api-key", token);
         res.status(200).send({ status: true, token: token });
         console.log(token);
     }
@@ -102,9 +105,9 @@ const authorLogin=async function(req ,res){
 //--------------------------------------------UPDATE BLOG-----------------------------------------------------------
 const updateBlog = async function (req, res) {
     try {
-        const blogId = req.params.blogId
+  /*      const blogId = req.params.blogId
         if (!blogId) {
-            return res.status(400).send({ status: false, msg: "please send blogId" })
+            return res.status(400).send({ status: false, msg: "please enter a blogId" })
         }
 
 
@@ -112,13 +115,14 @@ const updateBlog = async function (req, res) {
 
         if (!validId)
             return res.status(404).send({ status: false, msg: "plese send a valid blogId" })
-
+*/
+        const blogId = req.params.blogId 
         const check = req.body
         if (Object.keys(check) == 0) {
             return res.status(400).send({ status: false, msg: "no data recieved to update" })
         }
 
-        let {title,body, tags, subcategory} = req.body;
+        let {title, body, tags, subcategory} = req.body;
 
         const update = {}
         if (title) {
@@ -148,22 +152,35 @@ const updateBlog = async function (req, res) {
 
 const deleteById = async function (req, res) {
     try {
-        const blogId = req.params.blogId
+ /*     const blogId = req.params.blogId
         if (!blogId) {
             return res.status(400).send({ status: false, msg: "please enter a blogId" })
         }
+        
         const validId = await blogModel.findById(blogId)
         if (!validId)
             return res.status(404).send({ status: false, msg: "plese send a valid blogId" })
-        if (validId.isDeleted === 'true')
+  */
+        //check blog details in req object
+  /*      let validBlog = req.validBlog;
+        if(!validBlog){
+            return res.status()
+        }
+  */      
+        
+        //const {blogId, isDeleted} = req.validBlog;
+        const blogId = req.params.blogId
+        const isDeleted = req.isDeleted;
+
+        if (isDeleted === 'true')
             return res.status(404).send({ status: false, msg: "resource not found!!! already deleted" })
         
-            const time = timestamp('YYYY/MM/DD:mm:ss')
+        const time = timestamp('YYYY/MM/DD:mm:ss')
         const update = { isDeleted: true, deletedAt: time }
         const saveData = await blogModel.findOneAndUpdate({ _id: blogId }, update)
         res.status(200).send({ status: true, msg: "Deleted Sucessfully" })
-
     }
+
     catch (err) {
         res.status(500).send({ status: false, error: err.message })
     }
@@ -179,7 +196,8 @@ const deleteBlog = async function (req, res) {
        }
 
        let {category, authorId,tags, subcategory} = req.query
-       filter={}
+      
+     filter={}
        if(category){
         filter.category = category
         }
@@ -191,10 +209,13 @@ const deleteBlog = async function (req, res) {
        if(subcategory){
         filter.subcategory = subcategory
        }
+     
+    
+       
       // if(req.query.is){filter.=req.query}
       const time = timestamp('YYYY/MM/DD:mm:ss')
       update={isDeleted:true,deletedAt:time}
-      const saveData = await blogModel.updateMany(filter,update)
+      const saveData = await blogModel.updateMany({$or: [filter]},update)
       res.status(200).send({ status: true, msg: "Deleted Sucessfully" })
         }
     catch (err) {
