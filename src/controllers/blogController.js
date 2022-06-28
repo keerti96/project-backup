@@ -216,14 +216,7 @@ const updateBlog = async function (req, res) {
        //<<----------Validation--------->>  
         const blogId = req.params.blogId
         
-        // if (!isValidObjectId(blogId)) {
-        //     return res.status(400).send({ status: false, msg: "blogId is not valid" })
-        // }
-        // const validId = await blogModel.findById(blogId)
-        // if (!validId)
-        //     return res.status(404).send({ status: false, msg: "blog of this id not found" })
-
-         const check = req.body
+        const check = req.body
         if (Object.keys(check).length == 0) {
             return res.status(400).send({ status: false, msg: "no data recieved to update" })
         }

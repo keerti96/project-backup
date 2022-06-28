@@ -24,20 +24,20 @@ const blogSchema = new mongoose.Schema({
     category: {
         type: String,
         trim: true,
-        required: true        //, examples: [technology, entertainment, life style, food, fashion]
+        required: true      
     },
     subcategory: {
-        type: [String],      //examples[technology-[web development, mobile development, AI, ML etc]] 
+        type: [String],      
     },
     deletedAt: {
-        type: Date           //when the document is deleted
+        type: Date          
     },
     isDeleted: {
         type: Boolean,
         default: false
     },
     publishedAt: {
-        type: Date           //when the blog is published
+        type: Date          
     },
     isPublished: {
         type: Boolean,
