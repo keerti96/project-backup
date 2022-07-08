@@ -64,7 +64,7 @@ const authorization = async function (req, res, next) {
 
         //check if the logged-in user is requesting to modify their own resources 
         if (ownerOfBook != userId)
-            return res.status(403).send({ status: false, msg: 'Author logged in is not allowed to modify the requested blog data' })
+            return res.status(403).send({ status: false, msg: 'user logged in in is not allowed to modify the requested blog data' })
 
         next()
     }

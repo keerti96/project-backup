@@ -1,6 +1,6 @@
 const bookModel = require("../models/booksModel");
 const userModel = require("../models/userModel");
-const { isValidRequestBody, isValidData, isValidObjectId } = require("../validator/validation.js")
+const { isValidRequestBody, isValidData, isValidObjectId } = require("../validator/validation")
 const validator = require('validator')
 const moment = require('moment')
 

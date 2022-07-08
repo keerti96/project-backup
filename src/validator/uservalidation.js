@@ -1,12 +1,7 @@
-const mongoose = require("mongoose");
-const { isValidRequestBody, isValidObjectId, isValidData } = require("../validator/validation")
-// const validate = require("../validator/validation")
-
-
-
+//const mongoose = require("mongoose");
+const {isValidRequestBody, isValidObjectId, isValidData} = require("../validator/validation")
 
 const verifyPassword = function (password) {
-    
     //minimum password length validation  
     if (password.length < 8) {
         
@@ -21,16 +16,13 @@ const verifyPassword = function (password) {
         return msg;
     } 
     
-    
     return true;
-    
 }
 
 const verifyEmail = function(email){
     if (!/^[a-z0-9]{1,}@g(oogle)?mail\.com$/.test(email)) return false;
     return true;
 }
-
 
 const checkCreate = function (req, res, next) {
     try{
@@ -109,21 +101,17 @@ const checkLogin = function (req, res, next) {
     try{
     
         const requestBody = req.body
-            
 
             if (!isValidRequestBody(requestBody)) {
                 return res.status(400).send({ status: false, message: "Request body is empty!! Please provide the email and password" })
             }
 
-
             const {email, password} = requestBody
             
-
             if (!isValidData(email)) {
                 return res.status(400).send({ status: false, msg: "Please provide email" })
     
             }
-
            
             if (!isValidData(password)) {
                 return res.status(400).send({ status: false, msg: "Please provide password" })
@@ -135,33 +123,12 @@ const checkLogin = function (req, res, next) {
     
             }
 
-
-        const { email, password } = requestBody
-
-
-        if (!isValidData(email)) {
-            return res.status(400).send({ status: false, msg: "Please provide email" })
-
-        }
-
-
-        if (!isValidData(password)) {
-            return res.status(400).send({ status: false, msg: "Please provide password" })
-
-        }
-
-        if (!verifyEmail(email)) {
-            return res.status(400).send({ status: false, msg: "Email format is invalid" })
-
-        }
-
-
-        const result = verifyPassword(password)
-        if (result != true) {
-            return res.status(400).send({ status: false, message: result })
-        }
-
-        //if all validations are correct then go to controller
+            const result = verifyPassword(password)
+            if (result != true) {
+                return res.status(400).send({ status: false, message: result })
+            }
+            
+    //if all validations are correct then go to controller
         next()
 
     }
