@@ -31,9 +31,9 @@ const updateReview = async function (req, res) {
         if (!isValidRequestBody(data))
             return res.status(400).send({ status: false, msg: "Body cannot be empty" })
 
-        // //validating bookId
-        // if (!isValidObjectId(bookId))
-        //     return res.status(400).send({ status: false, msg: `bookId ${id.bookId} is Invalid BookId` })
+        //validating bookId
+        if (!isValidObjectId(bookId))
+            return res.status(400).send({ status: false, msg: `bookId ${id.bookId} is Invalid BookId` })
 
 
         let reqBook = await bookModel.findById(bookId).select({ ISBN: 0, __v: 0 });
@@ -116,8 +116,8 @@ const deleteReview = async function (req, res) {
 
         let {bookId, reviewId} = req.params
   
-        // if (!isValidObjectId(bookId))
-        //     return res.status(400).send({ status: false, msg: `bookId ${id.bookId} is Invalid BookId` })
+        if (!isValidObjectId(bookId))
+            return res.status(400).send({ status: false, msg: `bookId ${id.bookId} is Invalid BookId` })
 
         let reqBook = await bookModel.findOne({_id: bookId});
 

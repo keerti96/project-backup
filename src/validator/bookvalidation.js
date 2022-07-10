@@ -12,26 +12,26 @@ const bookvalidation = async function (req, res, next) {
         if (!isValidRequestBody(data))
             return res.status(400).send({ status: false, msg: "Body cannot be empty" })
 
-        
+        const {title, excerpt, userId, ISBN, category, subcategory, releasedAt} = data
 
         //validating title is entered and valid
-        if (!isValidData(data.title))
-            return res.status(400).send({ status: false, msg: `${data.title} is not a valid title` })
-        if (!/^([a-zA-Z ]+)$/.test(data.title.trim())) {
+        if (!isValidData(title))
+            return res.status(400).send({ status: false, msg: `${title} is not a valid title` })
+        if (!/^([a-zA-Z ]+)$/.test(title.trim())) {
             return res.status(400).send({ status: false, msg: " enter valid title in alphabets only " });
         }
-        let title = await bookModel.findOne({ title: data.title })
-        if (title) return res.status(400).send({ status: false, msg: "Book with this title is already" })
+        let bookTitle = await bookModel.findOne({ title: title })
+        if (bookTitle) return res.status(400).send({ status: false, msg: "Book with this title is already" })
 
         //validating excerpt is entered and valid
-        if (!isValidData(data.excerpt))
-            return res.status(400).send({ status: false, msg: `${data.excerpt} is not a valid excerpt` })
-        if (!/^([a-zA-Z\S ]+)$/.test(data.excerpt.trim())) {
+        if (!isValidData(excerpt))
+            return res.status(400).send({ status: false, msg: `${excerpt} is not a valid excerpt` })
+        if (!/^([a-zA-Z\S ]+)$/.test(excerpt.trim())) {
             return res.status(400).send({ status: false, msg: "enter valid excerpt in alphabets only" });
         }
 
         //validating userId is entered and valid
-        if (!isValidObjectId(data.userId))
+        if (!isValidObjectId(userId))
             return res.status(400).send({ status: false, msg: `${data.userId} is not a valid Object ID` })
 
         let user_id = await userModel.findById({ _id: data.userId });
