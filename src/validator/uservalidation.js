@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 const userModel = require("../models/userModel");
 const { isValidRequestBody, isValidData } = require("./validation")
 
-
-
-
-
 const verifyPassword = function (password) {
 
     //minimum password length validation  
@@ -21,8 +17,6 @@ const verifyPassword = function (password) {
         message = "Password length must not exceed 15 characters"
         return message;
     }
-
-
     return true;
 
 }
@@ -32,10 +26,8 @@ const verifyEmail = function (email) {
     return true;
 }
 
-
 const checkCreate = async function (req, res, next) {
     try {
-
         const requestBody = req.body
 
         if (!isValidRequestBody(requestBody)) {
@@ -94,9 +86,6 @@ const checkCreate = async function (req, res, next) {
             return res.status(400).send("type of phone should be number")
         }
 
-       
-
-
         if (!(["Mr", "Mrs", "Miss"].includes(title))) {
             return res.status(400).send({ status: false, message: "title not valid : it should be Mr ,Mrs, Miss" })
         }
@@ -121,7 +110,6 @@ const checkCreate = async function (req, res, next) {
             if (typeof address !== "object") {
                 return res.status(400).send({ status: false, message: "address should be in object format" })
             }
-
 
             if (address.street) {
                 if(typeof address.street !== "string"){
@@ -174,11 +162,9 @@ const checkLogin = async function (req, res, next) {
 
         if (!isValidRequestBody(requestBody)) {
             return res.status(400).send({ status: false, message: "Request body is empty!! Please provide the email and password" })
-        }
-         
+        }         
 
         const { email, password } = requestBody
-
 
         if (!isValidData(email)) {
             return res.status(400).send({ status: false, message: "Please provide email" })
@@ -196,10 +182,6 @@ const checkLogin = async function (req, res, next) {
             return res.status(400).send("type of password should be string")
         }
 
-
-
-
-
         if (!verifyEmail(email)) {
             return res.status(400).send({ status: false, message: "Email format is invalid" })
 
@@ -209,7 +191,6 @@ const checkLogin = async function (req, res, next) {
         if (checkemail.length === 0) {
             return res.status(400).send({ status: false, message: "email is not registered" });
         }
-
 
         const result = verifyPassword(password)
         if (result != true) {
