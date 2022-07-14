@@ -2,7 +2,7 @@ const bookModel = require("../models/booksModel");
 const userModel = require("../models/userModel");
 const { isValidRequestBody, isValidObjectId, isValidData } = require("./validation")
 const validator = require('validator')
-
+const {bookCoverValidation} = require("./aws")
 
 const bookvalidation = async function (req, res, next) {
     try {
@@ -27,19 +27,19 @@ const bookvalidation = async function (req, res, next) {
         if (!validUser) return res.status(404).send({ status: false, msg: "user not found" })
 
 
-        //<======Authorizing User=======>
-        //check if the logged-in user is requesting to modify their own resources 
-        if (userId != req.decodedtoken.userId)
-            return res.status(403).send({ status: false, msg: 'Author loggedin is not allowed to modify the requested book data' })
-        console.log("Successfully Authorized")
+        // //<======Authorizing User=======>
+        // //check if the logged-in user is requesting to modify their own resources 
+        // if (userId != req.decodedtoken.userId)
+        //     return res.status(403).send({ status: false, msg: 'Author loggedin is not allowed to modify the requested book data' })
+        // console.log("Successfully Authorized")
 
 
         //<=====Validation=====>        
         //validating title is entered and valid
         if (!isValidData(title))
-            return res.status(400).send({ status: false, message: "please enter title key or valid tilte" })
-        if (!/^([a-zA-Z 0-9]+)$/.test(title.trim())) {
-            return res.status(400).send({ status: false, message: "enter valid title in alphabets only " });
+            return res.status(400).send({ status: false, message: "please enter title" })
+        if (!/^([a-zA-Z 0-9 ?$#@&*!]+)$/.test(title.trim())) {
+            return res.status(400).send({ status: false, message: "enter valid title " });
         }
 
         //validating excerpt is entered and valid
@@ -117,6 +117,20 @@ const bookvalidation = async function (req, res, next) {
             return res.status(400).send({ status: false, message: "please enter new ISBN" });
         }
 
+        
+
+        //check if BookCover link creation
+        // console.log("Function call")
+        // console.log("Function returned",bookCoverValidation(req))
+
+        //let cover = bookCoverValidation(req)
+        
+        // if(cover){
+        //     console.log(cover)
+        //     req.body.bookCover = cover;
+        // }
+
+        ///done
         next()
     }
     catch (err) {

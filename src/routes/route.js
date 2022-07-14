@@ -12,7 +12,6 @@ const {createBook,getBookbyQuerry,bookDetail,updateBook,deleteBookbyPath}=requir
 //================================review logic importing==================================//
 const {createReview,updateReview,deleteReview } =require('../controllers/reviewController')
 const{reviewCheck}=require("../validator/reviewvalidation")
-const{RequestBody}=require("../validator/validation")
 
 
 
@@ -26,7 +25,7 @@ router.post('/login',checkLogin,userLogin)
 
 //================================routes for books============================================================//
        //<-------------------book create------------------------->//
-router.post('/books',authentication,bookvalidation,createBook)
+router.post('/books',bookvalidation,createBook)
        //<------------------get book-------------------------->//
 router.get('/books',authentication,getBookbyQuerry)
        //<-----------------get book by bookId-------------->//

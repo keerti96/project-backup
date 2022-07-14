@@ -3,8 +3,12 @@ const reviewModel = require("../models/reviewModel")
 const { isValidRequestBody, isValidObjectId, isValidData } = require("../validator/validation")
 const validator = require('validator')
 
+
+
+
 const createBook = async function (req, res) {
     try {
+
         const data = req.body;
         data.title = data.title.trim().split(" ").filter(word => word).join(" ");
         data.excerpt = data.excerpt.trim().split(" ").filter(word => word).join(" ");

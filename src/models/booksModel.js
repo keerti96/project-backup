@@ -1,7 +1,9 @@
 const mongoose = require('mongoose')
 
 const bookSchema = new mongoose.Schema({
-
+    bookCover: {
+        type: String
+    },
     title: {
         type: String,
         required: true,
@@ -43,8 +45,8 @@ const bookSchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
-    deletedAt: { type: Date},
-     __v: { type: Number, select: false},
+    deletedAt: { type: Date },
+    __v: { type: Number, select: false },
 
 }, { timestamps: true });
 
