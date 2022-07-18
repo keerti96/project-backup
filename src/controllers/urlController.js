@@ -11,41 +11,59 @@ const createUrl = async function (req, res) {
         const longUrl = req.body.longUrl;
         const baseUrl = "http://localhost:3000"
 
-        // if(!validUrl.isUri(baseUrl)){
-        //     return res.status(401).json("Internal error. Please come back later.");
-        // }
 
         const urlCode = shortid.generate();
 
-        if (!validUrl.isUri(longUrl)) {
-            res.status(400).json("Invalid URL!! Please enter a valid url for shortening");
+        if (!longUrl) {
+            res.status(400).send({ status: false, message:"Invalid request body parameters!! Please enter a valid url"});
         }
 
+        if (!validUrl.isUri(longUrl)) {
+            res.status(400).send({ status: false, message: "Invalid URL!! Please enter a valid url for shortening"});
+        }
 
-        let url = await urlModel.findOne({ longUrl: longUrl });
-         if(url){
-             return  res.status(200).json(url);
-         }
+        if(longUrl.match("[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)")){
+            res.status(400).send({status: false, message: "Invalid URL!! Please ensure format of url!"});
+        }
+
+        let urlData = await urlModel.findOne({ longUrl: longUrl }).select({ longUrl: 1, shortUrl: 1, urlCode: 1, _id: 0 });
+        if (urlData) {
+            return res.status(200).send({ status: true, data: urlData })
+        }
 
         const shortUrl = baseUrl + "/" + urlCode;
-        url = new urlModel({
-            longUrl,
-            shortUrl,
-            urlCode,
-            clickCount: 0
-        });
+        const input = { longUrl: longUrl, shortUrl: shortUrl, urlCode: urlCode };
 
-        await url.save()
-        return res.status(201).json(url);
-    
-    //     //<----create a user document---->
-    //     const savedData = await userModel.create(requestBody)
-    // return res.status(201).send({ status: true, message: 'Success', data: savedData })
-}
+        urlData = await urlModel.create(input);
+
+        const displayData = { longUrl: urlData.longUrl, shortUrl: urlData.shortUrl, urlCode: urlData.urlCode }
+
+        return res.status(201).send({ status: true, data: displayData });
+
+    }
     catch (err) {
-    res.status(500).send({ status: false, error: err.message })
-}
+        res.status(500).send({ status: false, error: err.message })
+    }
 }
 
+const getUrl = async function (req, res) {
+    try {
 
-module.exports = {createUrl}
+        let urlCode = req.params.urlCode;
+        let urlData = await urlModel.findOne({ urlCode: urlCode });
+
+        if (!urlData) {
+            res.status(404).send({ status: false, message:"urlCode not found!"});
+        }
+
+        console.log("Redirecting to the url!!")
+        return res.status(302).redirect(urlData.longUrl);
+
+
+    }
+    catch (err) {
+        res.status(500).send({ status: false, error: err.message })
+    }
+}
+
+module.exports = { createUrl, getUrl }
