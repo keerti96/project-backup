@@ -31,7 +31,7 @@ const createUrl = async function (req, res) {
             res.status(400).send({status: false, message: "Invalid URL!! Please ensure format of url!"});
         }
 
-        let urlData = await urlModel.findOne({ longUrl: longUrl }).select({ longUrl: 1, shortUrl: 1, urlCode: 1, _id: 0, __v: 0 });
+        let urlData = await urlModel.findOne({ longUrl: longUrl }).select({ longUrl: 1, shortUrl: 1, urlCode: 1, _id: 0});
         if (urlData) {
             return res.status(200).send({ status: true, data: urlData })
         }
