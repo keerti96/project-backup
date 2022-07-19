@@ -8,28 +8,34 @@ const urlModel = require('../models/urlModel')
 //<<-------------------------------------------generate shorturl---------------------------------------------------->>
 const createUrl = async function (req, res) {
     try {
-        const longUrl = req.body.longUrl.trim().toLowerCase();
+        const longUrl = req.body.longUrl.trim()//.toLowerCase();
         const baseUrl = "http://localhost:3000"
 
 
         const urlCode = shortid.generate();
 
         if (!Object.keys.length) {
-            res.status(400).send({ status: false, message:"Invalid request body parameters!! Request body can't be empty"});
+            return res.status(400).send({ status: false, message:"Invalid request body parameters!! Request body can't be empty"});
         }
 
         if(!longUrl){
-            res.status(400).send({status: false, message:"longUrl field is missing!! Please provide a longUrl!! "})
+            return res.status(400).send({status: false, message:"longUrl field is missing!! Please provide a longUrl!! "})
         }
 
-        if (!validUrl.isWebUri(longUrl)) {
-            res.status(400).send({ status: false, message: "Invalid URL!! Please enter a valid url for shortening"});
+        // if (!validUrl.isWebUri(longUrl)) {
+        //     return res.status(400).send({ status: false, message: "Invalid URL!! Please enter a valid url for shortening"});
+        // }
+        
+
+        // if(!longUrl.match(/^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/)){
+        //     return res.status(400).send({status: false, message: "Invalid URL!! Please ensure format of url!"});
+        // }
+
+        if(!longUrl.match(/^\s*http[s]?:\/\/[w]{3}[\.][a-z]+\.[a-z]{2,3}(\.[a-z]{2})?(\/[\w\-!@#$%^&*()+=?])*\s*$/)){
+                 return res.status(400).send({status: false, message: "Invalid URL!! Please ensure format of url!"});
         }
         
 
-        if(!longUrl.match(/^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/)){
-            res.status(400).send({status: false, message: "Invalid URL!! Please ensure format of url!"});
-        }
 
         let urlData = await urlModel.findOne({ longUrl: longUrl }).select({ longUrl: 1, shortUrl: 1, urlCode: 1, _id: 0});
         if (urlData) {
@@ -47,7 +53,8 @@ const createUrl = async function (req, res) {
 
     }
     catch (err) {
-        res.status(500).send({ status: false, error: err.message })
+        console.log(err)
+       return res.status(500).send({ status: false, error: err.message })
     }
 }
 
