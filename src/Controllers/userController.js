@@ -63,4 +63,43 @@ const isValidRequestBody = function (requestBody) {
     }
 }
 
+
+const loginuser= async function (req,res){
+    try{
+        let userName=req.body.email;
+        let password=req.body.password;
+        if(!userName){
+            return res.status(400).send({status:false,msg:"email is required"})
+        }
+        if(!password){
+            return res.status(400).send({status:false,msg:"password is required"})
+        }
+        let user = await userModel.findOne({email:userName,password:password})
+        if(!user){
+            return res.status(400).send({status:false,msg:"Invalid Email or Password"})
+        }
+
+        let token = jwt.sign(
+            {
+                userId:user_Id.toString(),
+                batch:"radon",
+                organization:"FunctionUp",
+            },
+            "functionup-radon-secretKey"
+        );
+
+        res.setHeader("x-auth-token", token);
+        res.status(200).send({ status: true, token: token })
+
+        return res.status(200).send({ status: true, token: token, msg: "author logged in successfully" });
+
+
+    }
+    catch (err) {
+        return res.status(500).send(err.message);
+
+    }
+}
+
 module.exports={createUser}
+module.exports={loginuser}
